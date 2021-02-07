@@ -1,0 +1,44 @@
+chance      = 49
+if_win      = 1
+if_lose     = 1.4
+base        = balance/100000000
+chanceAwal  = 20
+chanceAkhir = 49
+if_profit   = 0.0000001
+wincount    = 0
+profit1     = 0
+nextbet     = base
+
+
+resetstats()
+function dobet()
+
+    chance = math.random(chanceAwal*100.0, chanceAkhir*100.0)/100.0
+
+    if win then
+        
+        wincount+=1
+        
+        if (profit > (profit1 + if_profit)) then
+            
+            wincount = 0
+            
+            profit1 = profit
+            
+            nextbet  = base
+            
+        else
+            
+            nextbet = previousbet*if_win
+            
+        end
+        
+    else
+        
+        wincount = 0
+        
+        nextbet  = previousbet*if_lose
+        
+    end
+
+end
