@@ -1,0 +1,69 @@
+-- sc mining Premium
+
+m1         = 5
+max1       = 33
+m2         = 90
+max2       = 93
+bone       = 0.01
+btwo       = 0.01
+bal        = balance*0.99
+pf         = balance*1.2 -- target ubah di sini
+chance     = math.random(m2*100.0, max2*100.0)/100.0
+multiplier = 1.213
+base       = 0.001
+nextbet    = 0.002
+bethigh    = false
+rollcount  = 9
+maxLoss    = 0 
+
+
+resetstats()                                                                                                                              
+
+function dobet()
+    print("goto target : "..pf - balance)     
+    print("maxloss : "..maxLoss)
+    if (balance <= maxLoss) then
+        print("Max Loss Reached. Stopping")
+        stop()
+    end
+
+--Randomizer
+
+r=math.random(2)
+
+if (r == 1) then
+     bethigh = true
+else
+     bethigh = false
+end
+
+
+--Randomly select High/Low
+bethigh = math.random(0,100)%2 == 0
+--change seed every 7 bet
+if (rollcount == 7) then
+    rollcount    = 0
+    resetseed();
+else
+    rollcount = rollcount + 1
+end
+
+
+
+--bet progression
+
+   if win then
+      chance  = math.random(m2*100.0, max2*100.0)/100.0
+      nextbet = 0.01
+   else
+      chance  = math.random(m1*100.0, max1*100.0)/100.0
+      nextbet = previousbet * multiplier
+   end
+
+  if profit>pf then
+      print ("STOP")
+      print ("Kalau sudah 100% !!!")
+      stop()
+  end
+end
+end
