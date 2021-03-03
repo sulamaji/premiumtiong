@@ -1,0 +1,208 @@
+-- SC ANTI LOSS 99% --
+
+-- low = .000001
+-- mid = .00001
+-- hi  = .0001 
+
+-- betlimit     = .0001 
+balancerisk  = -balance
+balancestop  = 1150
+profitstop   = 0
+lossfactor   = 0.03
+nextbet      = 0.00050000
+levelfactor  = -35
+streakpause  = levelfactor
+profitsaving = 1 -- per profit adding to risk
+profitgap    = profitsaving
+bethigh      = true  
+stopwin      = false
+profitsafe   = balancerisk
+chance       = 49.5
+betpayout    = 99.9/49.5 
+betupwin     = 1
+betlosses    = 0
+ifwin        = 0
+
+print("-----------------------------------")
+print("- base bet : "..nextbet)
+print("- profit saving : "..profitsaving)
+print("- balance risk : "..balancerisk)
+print("- target profit: "..profitstop)
+print("- target balance: "..balancestop) 
+print("-----------------------------------")
+
+function dobet()
+    
+   if win then
+       
+       base = 0.00050000 --balance * betlimit
+       
+       if(profit > profitgap) then
+           profitsafe = profit + balancerisk
+           profitgap  = profit + profitsaving
+           print("--[calibrate profitgap]--")
+           print("-  profitgap : "..profitgap)
+           print("-  profitsafe : "..profitsafe)
+           print("-----------------------------------")
+       end  
+       
+       if balance >= balancestop and balancestop != 0 then stop() end
+       if profit >= profitstop and profitstop != 0 then stop() end 
+       if stopwin then stop() end
+       
+       -- start logic win
+       
+       betlosses = 0
+       bethigh   = !bethigh
+       chance    = 49.5
+       nextbet   = previousbet * betupwin
+       
+       if(currentstreak > 3 or currentstreak == 1) then
+           nextbet = base
+       end
+          
+   else
+       
+       -- start logic loss
+       
+       chance    = 25
+       betlosses = previousbet + betlosses
+       ifwin     = currentstreak * lossfactor 
+       
+       if(currentstreak >= levelfactor) then
+           tobet = (ifwin- betlosses) / betpayout
+       else
+           tobet = betlosses / betpayout 
+       end
+       
+       -- safeprofit
+       
+       if(profitsafe + tobet >= profit) then
+           print("-----------------------------------")
+           print("profit safe -> "..profitsafe) 
+           print("next bet -> "..tobet)
+           print("-- not good--")
+           stop()
+       else   
+           nextbet = tobet 
+       end           
+       
+       if(currentstreak <= streakpause) then 
+           stopwin = true
+       end    
+      
+   end
+end
+ch        = 49.9
+ch2       = 13
+chance    = 49.90
+m         = 0
+m1        = 0
+m2        = 2.5
+m3        = 3
+mm        = 0
+base      = 0.1
+l         = 0
+nextbet   = base
+enablezz  = false 
+target    = 100
+enablesrc = false 
+w         = 5000
+wincount  = 0
+payout    = 0
+multi     = 0
+prof      = 0
+a         = 1
+betcount  = 0
+function dobet()
+    --resethistory ()
+betcount+=1
+if win then
+     wincount+=1
+     bethigh=!bethigh
+     ch2=13
+     ch=49
+     chance=ch
+     prof    = 0
+     nextbet = base
+     betcount=0
+     m1=0
+     m2=2.5
+     l=0
+     else
+     ch=ch-m2
+     m1+=1
+     l+=1
+ end
+    print("worstlosestrake:  " ..m)
+    print("largerbet:    " ..mm)
+    print("Profit :"..string.format("%.8f",profit))
+    print("Bet Amount :"..string.format("%.8f",nextbet))
+    print("wincount : "..wincount)
+if nextbet> mm then mm=nextbet end
+if m<l then
+m=l
+end
+ if betcount == 5 then bethigh=!bethigh end
+ if !win then
+    prof = prof-currentprofit  
+end
+if m1> 1 then
+       chance = ch
+       nextbet=previousbet
+end  
+if m1>3 then
+        chance=ch
+        payout = (100-1)/(chance+6)
+        multi   = payout/(payout-1.2)
+        nextbet = prof/(payout/multi)
+end
+if m1>8 then
+       chance = ch
+       nextbet=previousbet*3
+end  
+if m1>9 then
+        chance=ch
+        payout = (100-1)/(chance+5)
+        multi   = payout/(payout-1)
+nextbet = prof/(payout/multi)
+end
+if m1> 17 then
+       ch2 = ch2+m3
+       chance=ch2
+       nextbet=previousbet*5
+end  
+if m1>18 then
+        chance=ch2
+        payout = (100-1)/(chance+4)
+        multi   = payout/(payout-1)
+        nextbet = prof/(payout/multi)
+end
+if m1>25 then
+        awaitgame(1)
+        chance=math.random(45*100,49*100)/100
+        payout = (100-1)/(chance+4)
+        multi   = payout/(payout-1)
+        nextbet = prof/(payout/multi)
+end
+if m1>40 then
+        awaitgame(1)
+        chance=math.random(55*100,59*100)/100
+        payout = (100-1)/(chance+1.5)
+        multi   = payout/(payout-1)
+        nextbet = prof/(payout/multi)
+end
+if nextbet<base then nextbet=base end
+if (wincount==w) then
+wincount=0
+awaitgame(50)
+
+end
+if balance > target then
+        stop()
+        print("=======================")
+        print("==== TARGET REACHED ====")
+        print("=======================")
+        print("Total Profit: "..string.format("%.8f",profit))
+    end
+    end
