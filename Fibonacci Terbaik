@@ -1,0 +1,195 @@
+
+enablezz=false 
+
+enablesrc=false 
+
+
+
+minbet   = balance/1000000000
+restTime = 0.0 
+ 
+basebet    = balance/100000000
+nextbet    = basebet
+basechance = 34.75
+paniclevel = 5
+panicflag  = 0
+prevbet    = basebet
+
+fibstep = 1.0
+                  
+
+dynStep = 1000000000 
+
+dynamicBase = true 
+smoothPanic = false 
+panicReset = 50 
+panicCounter = 0
+panicOffset = 1.0
+
+
+onwin = -2
+onlose = 1
+fibdex=0
+currbet=basebet
+
+panicnumber = 1  
+i=0
+
+ 
+local clock = os.clock
+function sleep(n) 
+    local t0 = clock()
+    while clock() - t0 <= n do end
+end
+ 
+
+function myfib(level)
+    fibno=basebet
+    temp=0
+    prevfibno=0
+    if level == 0 then
+        fibno= basebet
+    else
+        for j=0,level-1,1 do
+            
+            temp=fibno
+            fibno=fibno + (prevfibno * fibstep)
+            prevfibno=temp
+        end
+    end
+    return fibno    
+end
+
+ 
+function initialize()
+    if dynamicBase == true then
+        basebet = balance / dynStep
+        if basebet < minbet then
+            basebet = minbet
+        end
+    end
+    panicnumber=basebet
+    nextbet = basebet
+    chance = basechance  
+    temp=0
+    prevtemp=0
+    fibdex=0
+
+    panicnumber=myfib(paniclevel)
+
+    tempstr = "Panic Number: panicnumber"
+    tempcalc = string.format("%.8f", panicnumber)
+    tempstr = string.gsub(tempstr, "panicnumber", tempcalc)
+
+    print (tempstr)
+    
+    highLowAverage = {}
+    averageCount = 0
+    averageIndex = 0
+    averageMax = panicReset  
+    
+    rollCount = 0
+    rollSeedCount = 0
+    
+     
+    for i=0, averageMax do
+        highLowAverage[i] = 0
+    end
+    
+
+end
+
+
+initialize()
+
+function dobet()
+
+    if win then
+    
+         
+        
+        if panicflag==1 then
+            nextbet=basebet
+            fibdex=0
+            print("panic over, reset")
+        else
+            
+            fibdex=fibdex+onwin
+            
+            if fibdex < 0 then  
+                fibdex=0
+            end
+            
+            nextbet=myfib(fibdex)
+        end
+        if dynamicBase == true then
+            basebet = balance / dynStep
+            if basebet < minbet then
+                basebet = minbet
+            end
+            panicnumber = myfib(paniclevel)
+        end
+        panicCounter=0
+        panicflag=0
+        chance = basechance
+        
+    else  
+         
+        if prevbet >= panicnumber then
+            print("bet over limit, PANIC")
+            panicflag=1
+        end
+        fibdex=fibdex+onlose
+        nextbet=myfib(fibdex)
+
+ 
+        if panicflag == 1 then
+            panicCounter += 1
+            if smoothPanic == true then
+                chance += panicOffset  
+            end
+        end
+
+        if panicCounter >= panicReset then  
+            nextbet = basebet
+            fibdex=0
+            panicflag = 0
+            chance = basechance
+            panicCounter = 0  
+            print("Too many panic rolls!  Resetting!")
+        end
+ 
+
+    end
+    
+    prevbet=nextbet
+
+ 
+     
+    if(lastBet.Roll >= 50) then
+        highLowAverage[averageIndex] = 1    
+    else
+        highLowAverage[averageIndex] = 0
+    end
+    averageIndex += 1
+    if(averageIndex >= averageMax) then
+        averageIndex = 0
+    end
+    if(averageCount < averageMax) then
+        averageCount += 1
+    end
+    average = 0.00
+    for i=0, averageCount do
+        average += highLowAverage[i]
+    end
+    average = average / averageCount
+     
+    if average >= 0.5 then
+        bethigh = true
+    else
+        bethigh = false
+    end
+ 
+    sleep(restTime)
+
+end
