@@ -1,0 +1,114 @@
+chance    = 33
+base      = 0.00001 --Disarankan Gunakan 0.00001
+nextbet   = base
+wincount  = 0
+losecount = 0
+target    = balance + 1.00
+bethigh   = true
+a         = 0
+i         = balance*0.99
+k         = 500
+roll      = 0
+target        = 506.00 --Isi Balance + Target WD di Sini!!
+simpan        = 6.00 --Isi Nilai Auto WD di SINI!!
+wallet        = "ISI ALAMAT WALLET ANDA DISINI"
+
+function dobet()
+if balance >= target then    
+    --Auto WD 6 DogeCoin
+    withdraw(simpan,wallet)
+    print(" ")
+    print("Assooooooyyyyy!!!!!")
+    print(" ")
+    print("Gaaaaasssss FULL Guys!!!")
+    print(" ")
+    resetstats()
+end
+if currentstreak <= -50 then
+    --BOT AKAN STOP JIKA Maximum Loss Level Streak Tercapai!!
+    stop()
+end
+roll+=1
+if balance > target then 
+    stop() 
+end
+if a    ==16 then
+bethigh = !bethigh
+resetseed()
+a=0
+end
+if win then
+a+=1
+  nextbet   = base
+  chance    = 20
+  losecount = 0
+else
+  nextbet = previousbet*1.33
+  losecount+=1
+end
+ if roll>=50 and i>k then 
+resetseed() 
+resetstats()
+print(" ") 
+print("target: "..target) 
+print("nextbet: "..nextbet) 
+print("chance: "..chance) 
+print("Profit to go: "..target - balance) 
+print(" ")
+stop()
+end 
+if (losecount >= 6) then
+   nextbet = previousbet*1.13
+   chance = 6 
+end
+if (losecount >= 9) then
+   nextbet = previousbet*1.13
+   chance = 20
+end
+if (losecount >= 12) then
+   nextbet = previousbet*1.13
+   chance  = 8
+end
+if (losecount >= 15) then
+   nextbet = previousbet*1.13
+   chance  = 19
+end
+if (losecount >= 18) then
+   nextbet = previousbet*1.13
+   chance  = 10
+end
+if (losecount >= 43) then
+   nextbet = previousbet*1.55
+   chance  = 28
+end
+if (losecount >= 44) then
+  nextbet = previousbet*1.55
+  chance  = 12.12 
+end
+if (losecount >= 45) then
+  nextbet = previousbet*1.51
+  chance  = 24.3
+end
+if (losecount >= 46) then
+  nextbet = previousbet*1.53
+  chance  = 18.5
+end
+if (losecount >= 47) then
+  nextbet = previousbet*1.56
+  chance  = 32.2
+end
+if (losecount >= 48) then
+  nextbet = previousbet*1.56
+  chance  = 16.68
+end
+if (losecount >= 49) then
+  nextbet = previousbet*1.56
+  chance  = 37.18
+end
+if (losecount >= 50) then
+  nextbet = previousbet*1.65
+  chance  = 18.12
+  stop()
+end
+end
+end
