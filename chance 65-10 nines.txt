@@ -1,0 +1,28 @@
+chanceawal  = 6.5
+chanceakhir = 10
+multiplier  = 1.15
+base        = balance/100000000
+preroll     = 60
+prebet      = 0.00000001
+
+
+stretch    = 1
+function dobet() 
+chance = math.random(chanceawal*100.0,chanceakhir*100.0)/100.0
+
+ tmp = currentstreak+preroll 
+ if win then 
+  nextbet=prebet 
+ else 
+  if tmp == 0 then 
+   nextbet=base 
+  end 
+  if tmp < 0 then
+   if tmp %stretch == 0 then 
+    nextbet=previousbet*multiplier 
+    print (currentstreak)
+    resetseed()
+   end 
+  end 
+ end 
+end
