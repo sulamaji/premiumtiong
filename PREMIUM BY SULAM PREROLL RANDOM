@@ -1,0 +1,50 @@
+target      = 200 
+chance      = 49
+if_win      = 1
+if_lose     = 1.1
+base        = balance/1000000
+chanceAwal  = 5
+chanceAkhir = 10
+if_profit   = 0.0000001
+wincount    = 0
+profit1     = 0
+nextbet     = base
+preroll     = 0
+pr1         = 5
+pr2         = 10
+
+
+resetstats()
+resetseed()
+function dobet()
+
+    chance  = math.random(chanceAwal*100.0, chanceAkhir*100.0)/100.0
+    preroll = math.random(pr1*100.0, pr2*100.0)/100.0 
+
+    if win then
+        
+
+            
+            nextbet  = base
+            
+        
+      
+        
+    else
+            
+            if losses then
+                nextbet = previousbet*if_lose
+                
+                if (currentstreak >= -preroll) then
+                    nextbet = base
+    end
+    end
+
+
+end
+    function goal()
+        if balance >target then
+            stop()
+        end
+    end
+end
